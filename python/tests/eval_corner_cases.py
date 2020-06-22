@@ -12,7 +12,7 @@ j_max =  100
 
 sync_w = False
 
-example_index = 6
+example_index = 4
 
 if example_index == 1:
     # Fails to find timed solution with sync_w=False, works with sync_w=True.
@@ -24,7 +24,7 @@ elif example_index == 2:
     # Works in Matlab. Works if jerk limits modified to (-99.9, 100).
     (p0, v0, a0) = (np.array([ 0.6 ,  0.9]), np.array([0., 0.]), np.array([0., 0.]))
     (p1, v1, a1) = (np.array([ 1.0,   1.0]), np.array([0., 0.]), np.array([0., 0.]))
-elif example_index == 6:
+elif example_index == 3:
     # Core dump in "evaluate_to_time" with both sync_w=False and sync_w=True.
     # Works in Matlab. Works if jerk limits modified to (-99.9, 100). Error
     # text: "Index exceeds array dimensions.  Index value 1 exceeds valid range
@@ -32,6 +32,12 @@ elif example_index == 6:
     # (core dumped)".
     (p0, v0, a0) = (np.array([ 1.0 , -0.8]), np.array([-1.0,  0.5]), np.array([0., 0.]))
     (p1, v1, a1) = (np.array([ 1.0,   1.0]), np.array([ 1.0, -1.0]), np.array([0., 0.]))
+elif example_index == 4:
+    # Fails to find timed solution with sync_w=False, works with sync_w=True.
+    # Works in Matlab. Works if jerk limits modified to (-97, 100), but (-99.9,
+    # 100) still doesn't work.
+    (p0, v0, a0) = (np.array([-0.2,  0.6]), np.array([0.1, 1. ]), np.array([-0.1, -0.6]))
+    (p1, v1, a1) = (np.array([0., 0.]), np.array([0., 0.]), np.array([0., 0.]))
 else:
     assert False, "Must select a valid example_index."
 
