@@ -10,16 +10,26 @@ a_max =    5
 j_min = -100
 j_max =  100
 
-sync_w = True
+sync_w = False
 
-example_index = 1
+example_index = 6
 
 if example_index == 1:
-    # Fails to find timed solution with sync_w=False, works with sync_w=True. Works in Matlab.
+    # Fails to find timed solution with sync_w=False, works with sync_w=True.
+    # Works in Matlab. Works if jerk limits modified to (-99.9, 100).
+    (p0, v0, a0) = (np.array([ 0.1,  0.2,  0.5]), np.array([0., 0., 0.]), np.array([0., 0., 0.]))
+    (p1, v1, a1) = (np.array([ 0.0,  0.0,  0.0]), np.array([0., 0., 0.]), np.array([0., 0., 0.]))
+elif example_index == 2:
+    # Fails to find timed solution with sync_w=False, works with sync_w=True.
+    # Works in Matlab. Works if jerk limits modified to (-99.9, 100).
     (p0, v0, a0) = (np.array([ 0.6 ,  0.9]), np.array([0., 0.]), np.array([0., 0.]))
     (p1, v1, a1) = (np.array([ 1.0,   1.0]), np.array([0., 0.]), np.array([0., 0.]))
 elif example_index == 6:
-    # Core dump in "evaluate_to_time" with both sync_w=False and sync_w=True. Works in Matlab.
+    # Core dump in "evaluate_to_time" with both sync_w=False and sync_w=True.
+    # Works in Matlab. Works if jerk limits modified to (-99.9, 100). Error
+    # text: "Index exceeds array dimensions.  Index value 1 exceeds valid range
+    # [1-0] of array index_setp_max. Error in evaluate_to_time (line 25) Aborted
+    # (core dumped)".
     (p0, v0, a0) = (np.array([ 1.0 , -0.8]), np.array([-1.0,  0.5]), np.array([0., 0.]))
     (p1, v1, a1) = (np.array([ 1.0,   1.0]), np.array([ 1.0, -1.0]), np.array([0., 0.]))
 else:
