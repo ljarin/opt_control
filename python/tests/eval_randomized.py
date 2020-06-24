@@ -51,7 +51,7 @@ def plot_2d_projection_many_mp(ax, mp):
 
     for m in mp:
         if m['is_valid']:
-            st, sj, sa, sv, sp = min_time_bvp.sample_min_time_bvp(
+            st, sj, sa, sv, sp = min_time_bvp.uniformly_sample(
                 m['p0'], m['v0'], m['a0'], m['t'], m['j'], dt=0.001)
             if n_dim > 1:
                 ax.plot(sp[0,:], sp[1,:])
