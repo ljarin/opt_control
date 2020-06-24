@@ -151,7 +151,7 @@ def switch_states(p0, v0, a0, t, j):
     For axis i at time t[i,k] the state is (p[i,k], v[i,k], a[i,k]) and a
     constant jerk segment with value j[i,k] is initiated.
     """
-    
+
     n_axis   = p0.size
     n_switch = t.shape[1] # number of switch states
 
@@ -175,7 +175,7 @@ def switch_states(p0, v0, a0, t, j):
 def sample(p0, v0, a0, t, j, st):
     """
     Given an initial state and an input switching sequence, compute the full
-    state at a set of explicitly specified sample times. 
+    state at a set of explicitly specified sample times.
 
     Inputs:
         p0, initial position,     shape=(N,)
@@ -222,7 +222,7 @@ def sample(p0, v0, a0, t, j, st):
 def uniformly_sample(p0, v0, a0, t, j, dt):
     """
     Given an initial state and an input switching sequence, compute the full
-    state at sampled times with resolution dt. 
+    state at uniformly spaced sample times with resolution no coarser than dt.
 
     Inputs:
         p0, initial position,     shape=(N,)
@@ -232,21 +232,16 @@ def uniformly_sample(p0, v0, a0, t, j, dt):
         j,  jerk,         shape=(N,M)
         dt, time resolution
     Outputs:
-        st, times,        shape=(N,K)
+        st, times,        shape=(K,)
         sj, jerk,         shape=(N,K)
         sa, acceleration, shape=(N,K)
         sv, velocity,     shape=(N,K)
         sp, position,     shape=(N,K)
     """
 
-    # It is expected that the final t for each axis are identical.
+    start_t = t[:,0].min() # Assume equal start and end times for each axis.
     end_t = t[:,-1].max()
-    t[:,-1] = end_t
-    
-    # Allocate dense samples over time, jerk, acceleration, velocity, position.
-    st = np.arange(t[0,0], end_t, dt)
-    if st[-1] != end_t: # The final sample time gets exactly to the end state.
-        st = np.append(st, end_t)
-
+    N = int(np.ceil((end_t-start_t)/dt)) + 1
+    st = np.linspace(start_t, end_t, N)
     sj, sa, sv, sp = sample(p0, v0, a0, t, j, st)
     return st, sj, sa, sv, sp
