@@ -183,9 +183,8 @@ def sample(p0, v0, a0, t, j, st):
         a0, initial acceleration, shape=(N,)
         t,  switch times, shape=(N,M)
         j,  jerk,         shape=(N,M)
-        st, samplle_time, shape=(K,)
+        st, sample times, shape=(K,)
     Outputs:
-        st, times,        shape=(N,K)
         sj, jerk,         shape=(N,K)
         sa, acceleration, shape=(N,K)
         sv, velocity,     shape=(N,K)
@@ -216,9 +215,9 @@ def sample(p0, v0, a0, t, j, st):
                 sj[n,mask] =     j[n,i]
     else:
         # No sampling needed for zero time solution.
-        st, sj, sa, sv, sp = t, j, a, v, p
+        sj, sa, sv, sp = j, a, v, p
 
-    return st, sj, sa, sv, sp
+    return sj, sa, sv, sp
 
 def uniformly_sample(p0, v0, a0, t, j, dt):
     """
@@ -249,5 +248,5 @@ def uniformly_sample(p0, v0, a0, t, j, dt):
     if st[-1] != end_t: # The final sample time gets exactly to the end state.
         st = np.append(st, end_t)
 
-    _, sj, sa, sv, sp = sample(p0, v0, a0, t, j, st)
+    sj, sa, sv, sp = sample(p0, v0, a0, t, j, st)
     return st, sj, sa, sv, sp

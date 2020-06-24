@@ -29,7 +29,7 @@ def compute_many_mp(p0, v0, a0, p1, v1, a1, params):
             params['v_min'], params['v_max'], params['a_min'], params['a_max'], params['j_min'], params['j_max'],
             params['sync_v'], params['sync_a'], params['sync_w'])
         a, v, p = min_time_bvp.switch_states(p0[i], v0[i], a0[i], t, j)
-        st, sj, sa, sv, sp = min_time_bvp.sample_min_time_bvp(p0[i], v0[i], a0[i], t, j, dt=0.01)
+        st, sj, sa, sv, sp = min_time_bvp.uniformly_sample(p0[i], v0[i], a0[i], t, j, dt=0.01)
         is_valid = np.allclose(p1[i], sp[:,-1])
         if not is_valid:
             print()

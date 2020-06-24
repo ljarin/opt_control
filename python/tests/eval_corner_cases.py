@@ -36,7 +36,7 @@ else:
 # Analytically integrate the full state at the switching times. Then densely
 # sample the trajectory over time for plotting purposes.
 a, v, p = min_time_bvp.switch_states(p0, v0, a0, t, j)
-st, sj, sa, sv, sp = min_time_bvp.sample_min_time_bvp(p0, v0, a0, t, j, dt=0.001)
+st, sj, sa, sv, sp = min_time_bvp.uniformly_sample(p0, v0, a0, t, j, dt=0.001)
 
 # Plot the state over time.
 fig, axes = plt.subplots(4, 1, sharex=True)
