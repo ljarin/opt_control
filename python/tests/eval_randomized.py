@@ -36,6 +36,10 @@ def compute_many_mp(p0, v0, a0, p1, v1, a1, params):
             print('Test failed. The end position is wrong. Problem data:')
             print(f"(p0, v0, a0) = {(p0[i], v0[i], a0[i])}")
             print(f"(p1, v1, a1) = {(p1[i], v1[i], a1[i])}")
+            print(f"Final time for each axis (should be identical):")
+            print(f"{t[:,-1]}")
+            print(f"Actual Final position")
+            print(f"{sp[:,-1]}")
             print()
         mp.append({'p0':p0[i], 'v0':v0[i], 'a0':a0[i], 't':t, 'j':j, 'is_valid':is_valid})
     sec = (time.time() - start_time)/n_mp

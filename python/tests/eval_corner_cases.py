@@ -15,13 +15,15 @@ sync_w = False
 example_index = 4
 
 if example_index == 1:
-    # Fails to find timed solution with sync_w=False, works with sync_w=True.
-    # Works in Matlab. Works if jerk limits modified to (-99.9, 100).
+    # Returns "Error: Could not find valid timed solution!" with sync_w=False,
+    # works with sync_w=True. Works in Matlab. Works if jerk limits modified to
+    # (-99.9, 100). Solution is still fairly high quality.
     (p0, v0, a0) = (np.array([ 0.1,  0.2,  0.5]), np.array([0., 0., 0.]), np.array([0., 0., 0.]))
     (p1, v1, a1) = (np.array([ 0.0,  0.0,  0.0]), np.array([0., 0., 0.]), np.array([0., 0., 0.]))
 elif example_index == 2:
-    # Fails to find timed solution with sync_w=False, works with sync_w=True.
-    # Works in Matlab. Works if jerk limits modified to (-99.9, 100).
+    # Returns "Error: Could not find valid timed solution!" with sync_w=False,
+    # works with sync_w=True. Works in Matlab. Works if jerk limits modified to
+    # (-99.9, 100). Solution is still fairly high quality.
     (p0, v0, a0) = (np.array([ 0.6 ,  0.9]), np.array([0., 0.]), np.array([0., 0.]))
     (p1, v1, a1) = (np.array([ 1.0,   1.0]), np.array([0., 0.]), np.array([0., 0.]))
 elif example_index == 3:
@@ -33,9 +35,9 @@ elif example_index == 3:
     (p0, v0, a0) = (np.array([ 1.0 , -0.8]), np.array([-1.0,  0.5]), np.array([0., 0.]))
     (p1, v1, a1) = (np.array([ 1.0,   1.0]), np.array([ 1.0, -1.0]), np.array([0., 0.]))
 elif example_index == 4:
-    # Fails to find timed solution with sync_w=False, works with sync_w=True.
-    # Works in Matlab. Works if jerk limits modified to (-97, 100), but (-99.9,
-    # 100) still doesn't work.
+    # Returns "Error: Could not find valid timed solution!" with sync_w=False,
+    # works with sync_w=True. Works in Matlab. Works if jerk limits modified to
+    # (-97, 100), but (-99.9, 100) still doesn't work.
     (p0, v0, a0) = (np.array([-0.2,  0.6]), np.array([0.1, 1. ]), np.array([-0.1, -0.6]))
     (p1, v1, a1) = (np.array([0., 0.]), np.array([0., 0.]), np.array([0., 0.]))
 else:
