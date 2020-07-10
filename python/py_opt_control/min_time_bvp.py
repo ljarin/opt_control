@@ -87,7 +87,10 @@ def min_time_bvp(
     n_steps = 0
     for i in range(n_dim):
         mask = np.logical_not(np.isnan(t[i,:]))
-        (_, first_index, count) = np.unique(t[i,mask], return_index=True, return_counts=True)
+        t_masked =list(t[i, mask])
+        t_set = list(set(t[i, mask]))
+        first_index = np.array([t_masked.index(k) for k in t_set])
+        count = np.array([t_masked.count(k) for k in t_set])
         last_index = first_index + count - 1
         last_index.sort()
         t_list.append(t[i,last_index])
