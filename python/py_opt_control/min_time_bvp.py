@@ -210,7 +210,7 @@ def sample(p0, v0, a0, t, j, st):
         # Samples
         for n in range(n_axis):
             for i in range(n_switch):
-                mask = t[n,i] <= st
+                mask = t[n,i] <= st + 1e-10
                 dt = st[mask] - t[n,i]
                 sp[n,mask] = 1/6*j[n,i]*dt**3 + 1/2*a[n,i]*dt**2 + v[n,i]*dt + p[n,i]
                 sv[n,mask] = 1/2*j[n,i]*dt**2 +     a[n,i]*dt    + v[n,i]
