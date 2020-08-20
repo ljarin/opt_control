@@ -19,13 +19,14 @@ libcd.min_time_bvp.argtypes = [
     c_bool, c_bool, c_bool,
     array_2d_double, array_2d_double]
 
+
 def min_time_bvp(
-    p0, v0, a0,
-    p1, v1, a1,
-    v_min, v_max, a_min, a_max, j_min, j_max,
-    sync_v=True,
-    sync_a=True,
-    sync_w=True):
+        p0, v0, a0,
+        p1, v1, a1,
+        v_min, v_max, a_min, a_max, j_min, j_max,
+        sync_v=True,
+        sync_a=True,
+        sync_w=True):
     """
     Solve the minimum time state-to-state boundary value problem for a triple
     integrator in N dimensions.
@@ -65,9 +66,9 @@ def min_time_bvp(
     n_dim = p0.size
 
     # The interface uses an excess fixed sized array for the output control steps.
-    stride = 32 # Excess size.
-    t = np.full((n_dim,stride), np.nan, dtype=np.float64)
-    j = np.full((n_dim,stride), np.nan, dtype=np.float64)
+    stride = 32  # Excess size.
+    t = np.full((n_dim, stride), np.nan, dtype=np.float64)
+    j = np.full((n_dim, stride), np.nan, dtype=np.float64)
 
     # Call to C++ implementation.
     libcd.min_time_bvp(
@@ -86,32 +87,30 @@ def min_time_bvp(
     j_list = []
     n_steps = 0
     for i in range(n_dim):
-        mask = np.logical_not(np.isnan(t[i,:]))
-        t_masked =list(t[i, mask])
-        t_set = list(set(t[i, mask]))
-        first_index = np.array([t_masked.index(k) for k in t_set])
-        count = np.array([t_masked.count(k) for k in t_set])
+        mask = np.logical_not(np.isnan(t[i, :]))
+        (_, first_index, count) = np.unique(t[i, mask], return_index=True, return_counts=True)
         last_index = first_index + count - 1
         last_index.sort()
-        t_list.append(t[i,last_index])
-        j_list.append(j[i,last_index])
+        t_list.append(t[i, last_index])
+        j_list.append(j[i, last_index])
     n_steps = max(len(tl) for tl in t_list)
     t_final = np.zeros((n_dim, n_steps))
     j_final = np.zeros((n_dim, n_steps))
     for i in range(n_dim):
         n = len(t_list[i])
-        t_final[i,-n:] = t_list[i]
-        j_final[i,-n:] = j_list[i]
+        t_final[i, -n:] = t_list[i]
+        j_final[i, -n:] = j_list[i]
 
     return t_final, j_final
 
+
 def min_time_bvp_paranoia(
-    p0, v0, a0,
-    p1, v1, a1,
-    v_min, v_max, a_min, a_max, j_min, j_max,
-    sync_v=True,
-    sync_a=True,
-    sync_w=True):
+        p0, v0, a0,
+        p1, v1, a1,
+        v_min, v_max, a_min, a_max, j_min, j_max,
+        sync_v=True,
+        sync_a=True,
+        sync_w=True):
     t, j = min_time_bvp(
         p0, v0, a0,
         p1, v1, a1,
@@ -121,7 +120,7 @@ def min_time_bvp_paranoia(
         sync_w)
     a, v, p = switch_states(p0, v0, a0, t, j)
     st, sj, sa, sv, sp = sample_min_time_bvp(p0, v0, a0, t, j, dt=0.01)
-    is_valid = np.allclose(p1, sp[:,-1])
+    is_valid = np.allclose(p1, sp[:, -1])
     if not is_valid:
         sync_w = not sync_w
         t, j = min_time_bvp(
@@ -134,6 +133,7 @@ def min_time_bvp_paranoia(
         a, v, p = switch_states(p0, v0, a0, t, j)
         st, sj, sa, sv, sp = sample_min_time_bvp(p0, v0, a0, t, j, dt=0.01)
     return t, j
+
 
 def switch_states(p0, v0, a0, t, j):
     """
@@ -155,25 +155,26 @@ def switch_states(p0, v0, a0, t, j):
     constant jerk segment with value j[i,k] is initiated.
     """
 
-    n_axis   = p0.size
-    n_switch = t.shape[1] # number of switch states
+    n_axis = p0.size
+    n_switch = t.shape[1]  # number of switch states
 
     p = np.zeros((n_axis, n_switch))
     v = np.zeros((n_axis, n_switch))
     a = np.zeros((n_axis, n_switch))
 
-    p[:,0] = p0
-    v[:,0] = v0
-    a[:,0] = a0
+    p[:, 0] = p0
+    v[:, 0] = v0
+    a[:, 0] = a0
 
     for n in range(n_axis):
         for i in range(0,  n_switch-1):
-            dt = t[n,i+1] - t[n,i]
-            p[n,i+1] = 1/6*j[n,i]*dt**3 + 1/2*a[n,i]*dt**2 + v[n,i]*dt + p[n,i]
-            v[n,i+1] = 1/2*j[n,i]*dt**2 +     a[n,i]*dt    + v[n,i]
-            a[n,i+1] =     j[n,i]*dt    +     a[n,i]
+            dt = t[n, i+1] - t[n, i]
+            p[n, i+1] = 1/6*j[n, i]*dt**3 + 1/2*a[n, i]*dt**2 + v[n, i]*dt + p[n, i]
+            v[n, i+1] = 1/2*j[n, i]*dt**2 + a[n, i]*dt + v[n, i]
+            a[n, i+1] = j[n, i]*dt + a[n, i]
 
     return a, v, p
+
 
 def sample(p0, v0, a0, t, j, st):
     """
@@ -222,6 +223,32 @@ def sample(p0, v0, a0, t, j, st):
 
     return sj, sa, sv, sp
 
+
+def sample_position(p0, v0, a0, t, j, st):
+
+    n_axis = p0.size
+    n_switch = t.shape[1]
+
+    # Accurate states at exact switching times.
+    a, v, p = switch_states(p0, v0, a0, t, j)
+
+    if t.shape[1] > 1:
+        n_sample = st.size
+        sp = np.full((n_axis, n_sample), np.nan)
+
+        # Samples
+        for n in range(n_axis):
+            for i in range(n_switch):
+                mask = t[n, i] <= st
+                dt = st[mask] - t[n, i]
+                sp[n, mask] = 1/6*j[n, i]*dt**3 + 1/2*a[n, i]*dt**2 + v[n, i]*dt + p[n, i]
+    else:
+        # No sampling needed for zero time solution.
+        sp = p
+
+    return sp
+
+
 def uniformly_sample(p0, v0, a0, t, j, dt):
     """
     Given an initial state and an input switching sequence, compute the full
@@ -242,9 +269,18 @@ def uniformly_sample(p0, v0, a0, t, j, dt):
         sp, position,     shape=(N,K)
     """
 
-    start_t = t[:,0].min() # Assume equal start and end times for each axis.
-    end_t = t[:,-1].max()
+    start_t = t[:, 0].min()  # Assume equal start and end times for each axis.
+    end_t = t[:, -1].max()
     N = int(np.ceil((end_t-start_t)/dt)) + 1
     st = np.linspace(start_t, end_t, N)
     sj, sa, sv, sp = sample(p0, v0, a0, t, j, st)
     return st, sj, sa, sv, sp
+
+
+def uniformly_sample_position(p0, v0, a0, t, j, dt):
+    start_t = t[:, 0].min()  # Assume equal start and end times for each axis.
+    end_t = t[:, -1].max()
+    N = int(np.ceil((end_t-start_t)/dt)) + 1
+    st = np.linspace(start_t, end_t, N)
+    sp = sample_position(p0, v0, a0, t, j, st)
+    return st, sp
